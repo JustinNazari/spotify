@@ -1,6 +1,22 @@
 class SpotifyApiController < ApplicationController
 
-    def search 
+    def connect
+        client_id = Rails.application.credentials.spotify[:client_id]
+        response_type = 'code'
+        redirect_uri = 'http://localhost:3000/callback'
+        scope = 'streaming playlist-modify-public user-library-modify user-library-read playlist-read-private playlist-modify-private'
+        url = "https://accounts.spotify.com/authorize?client_id=#{client_id}&redirect_uri=#{redirect_uri}&scope=#{scope}&response_type=#{response_type}"
+        # binding.pry
+        render json: { url: url }, status: :ok
+    end
+
+    def callback
+        binding.pry
+        current_user = User.find session[:current_user]
+    end
+
+    def search
+        binding.pry
         results = SpotifyApi::Client.search_track(params[:track_name])
         
         first_track = results.dig('tracks', 'items', 0)

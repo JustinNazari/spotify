@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     delete '/logout', to: 'sessions#logout'
 
     
-  get "*path", to: "fallback#index", constraints: ->(req) { !req.xhr? && req.format.html? }
+  # get "*path", to: "fallback#index", constraints: ->(req) { !req.xhr? && req.format.html? }
 
   get "spotify_api/search", to: "spotify_api#search"
 
@@ -25,6 +25,8 @@ Rails.application.routes.draw do
 
   get "spotify_api/recommendations", to: "spotify_api#recommendations"
 
-  get "spotify_api/audio-features", to: "spotify_api#audio_features"
+  get "spotify_api/connect", to: "spotify_api#connect"
+
+  get "callback", to: "spotify_api#callback"
 
 end

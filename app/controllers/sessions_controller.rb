@@ -9,13 +9,9 @@ class SessionsController < ApplicationController
         
         # same as if user && user.authenticate
         if user&.authenticate(params[:password])
+
             session[:current_user] = user.id
-
-            # - Set Session's 'login_attempts' to 0
-            session[:login_attempts] = 0
-            
             render json: user, status: :ok
-
         else            
             # - Set Session's 'login_attempts' to 0 if Undefined / Falsey
             session[:login_attempts] ||= 0
