@@ -63,7 +63,14 @@ module SpotifyApi
             def connection
                 Faraday.new(url: 'https://api.spotify.com/v1', headers:{'Authorization' => "Bearer #{access_token}"})
             end
-            
+
+            def get_user_access_token(code:, redirect_uri:)
+                response = Faraday.post('https://accounts.spotify.com/api/token', {code: code, redirect_uri: redirect_uri, grant_type: 'authorization_code'}, {
+                  'Authorization' => "Basic #{credentials}", 'Content-Type' => 'application/x-www-form-urlencoded'
+                })
+                JSON.parse(response.body)
+            end
+
             def get_access_token
                 response = Faraday.post('https://accounts.spotify.com/api/token', {grant_type: 'client_credentials'}, {
                     'Authorization' => "Basic #{credentials}", 'Content-Type' => 'application/x-www-form-urlencoded'
@@ -71,7 +78,6 @@ module SpotifyApi
                     JSON.parse(response.body).dig("access_token")
                 end
             end
-            
         end
     end
     

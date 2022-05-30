@@ -4,8 +4,9 @@ class ApplicationController < ActionController::API
 
   include ActionController::Cookies
 
-  def current_user 
-    User.find_by(id: session[:current_user])
+  def current_user
+    User.first
+    # User.find_by(id: session[:current_user])
   end
 
   def authorize_user

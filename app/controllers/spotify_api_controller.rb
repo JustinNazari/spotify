@@ -1,22 +1,34 @@
 class SpotifyApiController < ApplicationController
+    REDIRECT_URI = 'http://localhost:3000/callback'
 
     def connect
         client_id = Rails.application.credentials.spotify[:client_id]
         response_type = 'code'
-        redirect_uri = 'http://localhost:3000/callback'
-        scope = 'streaming playlist-modify-public user-library-modify user-library-read playlist-read-private playlist-modify-private'
-        url = "https://accounts.spotify.com/authorize?client_id=#{client_id}&redirect_uri=#{redirect_uri}&scope=#{scope}&response_type=#{response_type}"
+
+        scope = 'streaming user-read-email user-read-private user-library-read user-library-modify user-read-playback-state user-modify-playback-state'
+        url = "https://accounts.spotify.com/authorize?client_id=#{client_id}&redirect_uri=#{REDIRECT_URI}&scope=#{scope}&response_type=#{response_type}"
         # binding.pry
         render json: { url: url }, status: :ok
     end
 
+    def get_user_token
+      render json: { token: current_user.access_token }, status: :ok
+    end
+
     def callback
-        binding.pry
-        current_user = User.find session[:current_user]
+        current_user = User.first
+        code = params[:code]
+        response = SpotifyApi::Client.get_user_access_token(code: code, redirect_uri: REDIRECT_URI)
+        access_token = response['access_token']
+        expires_at = Time.current + response['expires_in'].seconds
+        refresh_token = response['refresh_token']
+
+        current_user.update(access_token: access_token, expires_at: expires_at, refresh_token: refresh_token)
+        # flash[:success] = "This works!"
+        redirect_to "http://localhost:4000/success"
     end
 
     def search
-        binding.pry
         results = SpotifyApi::Client.search_track(params[:track_name])
         
         first_track = results.dig('tracks', 'items', 0)

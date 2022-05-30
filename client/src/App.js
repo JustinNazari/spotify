@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 import Navigation from './Navigation';
 import Home from './Home';
 import Search from './Search';
+import Success from './Success';
 import Playlists from './Playlists';
 import Login from './Login';
 
@@ -17,7 +18,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/authorised_user`)
+    fetch(`http://localhost:3000/authorized_user`)
     .then((res) => {
       if (res.ok) {
         res.json()
@@ -43,6 +44,7 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login setUser={setUser} setIsAuthenticated={setIsAuthenticated}/>}/>
           <Route path="/" element={<Home />}/>
+          <Route path="/success" element={<Success />}/>
           <Route path="/search" element={<Search playlists={playlists} setPlaylists={setPlaylists}/>}/>
           <Route path="/playlists" element={<Playlists playlists={playlists}/>}/>
         </Routes>

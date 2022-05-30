@@ -1,4 +1,6 @@
-// import {useState} from "react";
+import SpotifyPlayer from 'react-spotify-web-playback';
+
+import {useEffect, useState} from "react";
 
 function Result({ currentTrack, handleRecommendation, playlists, selectedPlaylist, setSelectedPlaylist, handleSaveTrack }) {
 
@@ -17,8 +19,26 @@ function Result({ currentTrack, handleRecommendation, playlists, selectedPlaylis
     return num > 0 ? "Major" : "Minor"
   }
 
+  const [userToken, setUserToken] = useState()
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/spotify_api/get_user_token`)
+        .then((res) => {
+          if (res.ok) {
+            res.json()
+                .then((res) => {
+                  setUserToken(res.token);
+                });
+          }
+        });
+  },[])
+
   return (
     <div>
+      {userToken && currentTrack && <SpotifyPlayer
+          token={userToken}
+          uris={[currentTrack.uri]}
+      />}
         <div className="text-green-200 text-xs font-medium leading-[19px] p-1 mx-auto flex items-left text-left justify-center">
           <img
             className=" mr-3 h-[170px]"
@@ -124,7 +144,6 @@ function Result({ currentTrack, handleRecommendation, playlists, selectedPlaylis
             </div>
           </div>
         </div>
-        
     </div>
   );
 }

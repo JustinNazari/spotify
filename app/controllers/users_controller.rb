@@ -6,7 +6,8 @@ class UsersController < ApplicationController
         end
     
         def show
-            current_user = User.find_by(id: session[:current_user])
+            # current_user = User.find_by(id: session[:current_user])
+            current_user = User.first
             render json: current_user
         end
         
